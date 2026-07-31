@@ -1,6 +1,6 @@
 ---
 name: memory-cleanup
-description: Use when the user asks to clean up, audit, prune, consolidate, or do maintenance on their agent memory / notes corpus - triggers include "memory cleanup", "clean up my notes", "audit the notes corpus", "prune stale memory", "consolidate memory notes", "run the memory linter". Drives the `replica memory lint` audit and works the findings category by category, with a mandatory fact-survival check before any deletion. Requires the `replica` CLI (the schoen-lab replica package) to be installed and pointed at the notes corpus.
+description: Use when the user asks to clean up, audit, prune, consolidate, or do maintenance on their agent memory / notes corpus - triggers include "memory cleanup", "clean up my notes", "audit the notes corpus", "prune stale memory", "consolidate memory notes", "run the memory linter". Drives the `replica memory lint` audit and works the findings category by category, with a mandatory fact-survival check before any deletion. Requires the `replica` CLI to be installed and pointed at the notes corpus.
 ---
 
 # Memory corpus cleanup
