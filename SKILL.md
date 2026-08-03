@@ -20,6 +20,18 @@ and it loses real knowledge.
 
 ## Setup
 
+Confirm the CLI is installed before doing anything else:
+
+```bash
+command -v replica >/dev/null || echo "replica not found"
+```
+
+If `replica` is missing, STOP and tell the user to install the `replica` CLI
+(the schoen-lab `replica` package) and point it at the notes corpus. Do not
+hand-replicate the linter's audit logic (orphan/stale-line/desc-drift/etc.
+detection) as a substitute - those checks are the reason this skill declares
+the dependency instead of bundling its own.
+
 Run the audit and read the categories:
 
 ```bash
@@ -71,44 +83,7 @@ Do these first; they are unambiguous wins and shrink the noise for later phases.
 4. `replica memory reindex`, then `replica memory lint` again - desc-drift,
    malformed, taxonomy should all be 0.
 
-## Phase 2 - prune stale-notes (judgment + deletion)
-
-`stale-note` is a keyword heuristic with a high false-positive rate. Read each
-candidate's head and classify:
-
-- **Genuinely dead** -> prune (git-recoverable). e.g. one-shot session intent,
-  a dated handoff whose work shipped/merged, a recap full of in-flight job IDs,
-  a self-expired note ("delete this when X").
-- **False positive -> keep.** Durable feedback that merely contains "DONE" in
-  prose; an active project note with open work; a note explicitly retained as
-  a reusable recipe; a note that now documents *current* behavior despite a
-  SUPERSEDED header.
-
-Always present the prune list to the user (grouped keep/prune with one-line
-reasons) and get approval before deleting. Deletes go through `git rm`.
-
-## Phase 3 - consolidate clusters (heaviest judgment)
-
-A `cluster` finding means N notes share a topic token. It is a prompt to LOOK,
-not a mandate to merge. The corpus is **one-fact-per-file by design**; most
-clusters are legitimately distinct facts that should stay separate. Coarse
-tokens (e.g. a shared filename prefix) produce false clusters of unrelated
-notes - never merge those.
-
-Triage read-only first. Fan out subagents (one per cluster, or a few clusters
-each), each instructed to find ONLY genuine redundancy and report:
-
-- **MERGE GROUPS** - true duplicates or tightly-overlapping fragments of the
-  *same* fact. Merge by folding all unique content into one note (keep the
-  better-named file), then `git rm` the other. Preserve every unique detail.
-- **STALE/PRUNE** - dated handoffs/recaps surfaced during the read. Feed these
-  into the Phase 4 fact-survival check.
-- **KEEP SEPARATE** - the (usual) majority; one line is enough.
-
-Expect few real merges. The real redundancy in a mature corpus is stale
-session-state notes, not duplicate facts.
-
-## Phase 4 - fact-survival check (MANDATORY before any prune from Phase 2/3)
+## Phase 2 - fact-survival check (run per-candidate before any prune in Phase 3/4)
 
 Before deleting any note flagged stale for naming a renamed/archived/migrated
 project, verify whether its fact still holds for the migrated code. Build the
@@ -128,7 +103,47 @@ false-positives (e.g. a flagged "outdated claim" that is actually correct once
 you read both notes) - verify before you "fix."
 
 Fan out the verification (it is read-heavy); the trims themselves are good
-subagent work given a precise keep/trim spec per note.
+subagent work given a precise keep/trim spec per note. Phase 3 and Phase 4
+below both surface prune candidates - run this check against each one *before*
+any `git rm`, not after.
+
+## Phase 3 - prune stale-notes (judgment + deletion)
+
+`stale-note` is a keyword heuristic with a high false-positive rate. Read each
+candidate's head and classify:
+
+- **Genuinely dead** -> prune (git-recoverable). e.g. one-shot session intent,
+  a dated handoff whose work shipped/merged, a recap full of in-flight job IDs,
+  a self-expired note ("delete this when X").
+- **False positive -> keep.** Durable feedback that merely contains "DONE" in
+  prose; an active project note with open work; a note explicitly retained as
+  a reusable recipe; a note that now documents *current* behavior despite a
+  SUPERSEDED header.
+
+Run the Phase 2 fact-survival check on every "genuinely dead" candidate first.
+Then present the prune list to the user (grouped keep/prune with one-line
+reasons) and get approval before deleting. Deletes go through `git rm`.
+
+## Phase 4 - consolidate clusters (heaviest judgment)
+
+A `cluster` finding means N notes share a topic token. It is a prompt to LOOK,
+not a mandate to merge. The corpus is **one-fact-per-file by design**; most
+clusters are legitimately distinct facts that should stay separate. Coarse
+tokens (e.g. a shared filename prefix) produce false clusters of unrelated
+notes - never merge those.
+
+Triage read-only first. Fan out subagents (one per cluster, or a few clusters
+each), each instructed to find ONLY genuine redundancy and report:
+
+- **MERGE GROUPS** - true duplicates or tightly-overlapping fragments of the
+  *same* fact. Merge by folding all unique content into one note (keep the
+  better-named file), then `git rm` the other. Preserve every unique detail.
+- **STALE/PRUNE** - dated handoffs/recaps surfaced during the read. Run these
+  through the Phase 2 fact-survival check before deleting.
+- **KEEP SEPARATE** - the (usual) majority; one line is enough.
+
+Expect few real merges. The real redundancy in a mature corpus is stale
+session-state notes, not duplicate facts.
 
 ## Finish
 
