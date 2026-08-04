@@ -23,7 +23,7 @@ and it loses real knowledge.
 Confirm the CLI is installed before doing anything else:
 
 ```bash
-command -v replica >/dev/null || echo "replica not found"
+command -v replica >/dev/null || { echo "replica not found - install the replica CLI before proceeding" >&2; exit 1; }
 ```
 
 If `replica` is missing, STOP and tell the user to install the `replica` CLI
@@ -85,9 +85,10 @@ Do these first; they are unambiguous wins and shrink the noise for later phases.
 
 ## Phase 2 - fact-survival check (run per-candidate before any prune in Phase 3/4)
 
-Before deleting any note flagged stale for naming a renamed/archived/migrated
-project, verify whether its fact still holds for the migrated code. Build the
-migration map first (what moved where), then for each candidate inspect the
+Before deleting any prune candidate, verify whether its fact still holds
+against the current code/docs. The common hard case is a note flagged stale
+for naming a renamed/archived/migrated project - for those, build the
+migration map first (what moved where). For each candidate inspect the
 relevant current code/docs and assign:
 
 - **DEAD** - pure ephemeral state, OR the fact is contradicted/superseded by
