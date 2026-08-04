@@ -38,3 +38,6 @@ anything declared in a `.skillpack`).
 The `replica` CLI must be installed and pointed at the notes corpus. The skill
 deliberately stays dependency-light and replica-driven - no bundled scripts in
 v1.
+
+`replica` ships as part of [schoen-lab](https://github.com/mtschoen/schoen-lab)
+(the schoen-lab `replica` package).

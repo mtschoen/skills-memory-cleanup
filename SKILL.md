@@ -27,10 +27,12 @@ command -v replica >/dev/null || { echo "replica not found - install the replica
 ```
 
 If `replica` is missing, STOP and tell the user to install the `replica` CLI
-(the schoen-lab `replica` package) and point it at the notes corpus. Do not
-hand-replicate the linter's audit logic (orphan/stale-line/desc-drift/etc.
-detection) as a substitute - those checks are the reason this skill declares
-the dependency instead of bundling its own.
+(the schoen-lab `replica` package, which ships as part of
+[schoen-lab](https://github.com/mtschoen/schoen-lab)) and point it at the
+notes corpus. Do not hand-replicate the linter's audit logic
+(orphan/stale-line/desc-drift/etc. detection) as a substitute - those checks
+are the reason this skill declares the dependency instead of bundling its
+own.
 
 Run the audit and read the categories:
 
