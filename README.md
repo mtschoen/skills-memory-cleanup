@@ -1,6 +1,6 @@
 # skills-memory-cleanup
 
-An agent skill that drives a careful cleanup pass over the agent
+A skill that drives a careful cleanup pass over the agent
 **memory / notes corpus** - the flat directory of one-fact-per-file markdown
 notes indexed by a generated `MEMORY.md`.
 
