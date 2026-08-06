@@ -54,12 +54,12 @@ Findings come in these kinds (from `memory_lint.py`):
 | `cluster` | >=5 notes share a topic token | triage (a "go look" prompt, NOT "merge all") |
 
 Valid `type` values: `user`, `feedback`, `project`, `idiom` (or `idioms`),
-`spike`, `reference`. Filename prefixes route an untyped note to a section:
-`reference_*`->reference, `spike_*`->spike, `idioms_*`->idiom,
+`spike`, `gotcha`, `reference`. Filename prefixes route an untyped note to a
+section: `reference_*`->reference, `spike_*`->spike, `idioms_*`->idiom,
 `project_*`/`feature_*`/`handoff_*`->project, `feedback_*`->feedback,
-`user_*`->user. The References section is the schema fallback, so a note whose
-prefix the schema does not list (e.g. `plan_*`) lands there unless it sets an
-explicit `type:`.
+`user_*`->user, `gotcha_*`->gotcha. The References section is the schema
+fallback, so a note whose prefix the schema does not list (e.g. `plan_*`)
+lands there unless it sets an explicit `type:`.
 
 ## Phase 1 - mechanical fixes (low risk, no content loss)
 
